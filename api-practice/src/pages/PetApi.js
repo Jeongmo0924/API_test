@@ -17,7 +17,7 @@ const PetApi = memo(() => {
         dispatch(
             petApiList({
                 partCode: partCode,
-                page: page*pageBlock,
+                page: page === 1 ? page : page*pageBlock,
                 pageBlock: pageBlock,
             })
         );
@@ -28,6 +28,7 @@ const PetApi = memo(() => {
         e.preventDefault();
 
         setPartCode(e.target.value);
+        setPage(1);
     };
 
     // 페이지 선택 버튼이 눌렸을 때 페이지를 바꿀 함수
@@ -52,6 +53,7 @@ const PetApi = memo(() => {
         e.preventDefault();
 
         setPageBlock(e.target.value);
+        setPage(1);
     };
     return (
         <div>
