@@ -33,6 +33,7 @@ const PetApiSlice = createSlice({
     name: 'pet',
     initialState: {
         resultList: null,         // Ajax 처리를 통해 수신된 데이터
+        totalCount: null,
         loading: false,     // 로딩 여부
         error: null,        // 에러 정보
     },
@@ -45,7 +46,8 @@ const PetApiSlice = createSlice({
         },
         [petApiList.fulfilled]: (state, {payload}) => {
             return {
-                resultList: payload?.data,
+                resultList: payload?.data?.resultList,
+                totalCount: payload?.data?.totalCount,
                 loading: false,
                 error: null,
             }
