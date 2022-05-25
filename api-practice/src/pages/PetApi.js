@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { petApiList } from "../slices/PetApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Table from "../components/Table"
+import { NavLink } from "react-router-dom";
 /** 드롭다운을 배치하기 위한 박스 */
 const SelectContainer = styled.div`
     position: sticky;
@@ -129,7 +130,7 @@ const PetApi = memo(() => {
                     resultList.map((v, i) => {
                         return (
                             <tr key={i}>
-                                <td>{v.areaName}</td>
+                                <td><NavLink to= "/detail" state = {{ partCode: partCode || "PC02", contentNum: v.contentSeq}} >{v.areaName}</NavLink></td>
                                 <td>{v.partName}</td>
                                 <td>{v.title}</td>
                                 <td>{v.address}</td>

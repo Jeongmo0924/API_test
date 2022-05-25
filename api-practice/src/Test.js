@@ -1,16 +1,17 @@
 import React from "react";
 import { petDetailList } from "./slices/PetApiDetailSlice";
 import { useSelector, useDispatch } from "react-redux";
+import {useLocation} from 'react-router-dom'
 
 const Test = () => {
     const dispatch = useDispatch();
+    const location = useLocation();
     const { resultList, loading, error } = useSelector((state) => state.petDetail);
-
     React.useEffect(() => {
         dispatch(
             petDetailList({
-                partCode: "PC02",
-                contentNum: 1,
+                partCode: location.state.partCode,
+                contentNum: location.state.contentNum,
             })
         );
     }, [dispatch]);
