@@ -123,6 +123,7 @@ const PetApi = memo(() => {
                         <th>업체명</th>
                         <th>주소</th>
                         <th>전화번호</th>
+                        <th>상세페이지</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -130,11 +131,12 @@ const PetApi = memo(() => {
                     resultList.map((v, i) => {
                         return (
                             <tr key={i}>
-                                <td><NavLink to= "/detail" state = {{ partCode: partCode || "PC02", contentNum: v.contentSeq}} >{v.areaName}</NavLink></td>
+                                <td>{v.areaName}</td>
                                 <td>{v.partName}</td>
                                 <td>{v.title}</td>
                                 <td>{v.address}</td>
                                 <td>{v.tel}</td>
+                                <td><NavLink to= "/detail" state = {{ partCode: partCode || "PC02", contentNum: v.contentSeq}}>상세보기</NavLink></td>
                             </tr>
                         )
                     })}
