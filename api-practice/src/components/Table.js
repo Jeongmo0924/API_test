@@ -3,7 +3,7 @@ import styled from 'styled-components';
 /** 표에 CSS를 적용한 styledComponents */
 const Table = styled.table`
     border-collapse: collapse;
-    border-top: 3px solid #16B;
+    border-bottom: 3px solid #16B;
     font-size: 14px;
     text-align: center;
     margin: auto;

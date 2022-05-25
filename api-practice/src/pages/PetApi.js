@@ -9,13 +9,23 @@ const SelectContainer = styled.div`
     position: sticky;
     top: 0;
     background-color: #fff;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    border-bottom: 3px solid #16B;
     padding: 10px 0;
     margin: 0;
+    text-align: right;
+
+    hr {
+        border: none;
+        border-top: 3px solid #16B;
+    }
+
+    h1 {
+        text-align: center;
+        color: #16B;
+    }
 
     select {
-        margin-right: 15px;
+        margin: 0 15px;
         font-size: 16px;
         padding: 5px 10px;
     }
@@ -75,7 +85,10 @@ const PetApi = memo(() => {
     return (
         <div>
             <SelectContainer>
+            <h1>강원도 반려동물 동반관광 API</h1>
+            <hr />
                 {/* 분야별 선택 필터 */}
+                <label>분야 선택 : 
                 <select className="select" name="part" onChange={onChangePart}>
                     <option name="part" value="">
                         -- 분야 --
@@ -96,7 +109,9 @@ const PetApi = memo(() => {
                         동물병원
                     </option>
                 </select>
+                </label> 페이지 당 결과수 : 
                 {/* 페이지당 결과 수 선택 드롭다운 */}
+                <label>
                 <select className="select" name="pageBlock" onChange={onChangePageBlock}>
                     <option name="pageBlock" value="10">
                         10
@@ -114,9 +129,10 @@ const PetApi = memo(() => {
                         50
                     </option>
                 </select>
+                </label>
             </SelectContainer>
             <Table>
-                <thead>
+                <thead style={{position: 'sticky', top:'151.03px'}}>
                     <tr>
                         <th>지역명</th>
                         <th>분야명</th>
@@ -142,13 +158,12 @@ const PetApi = memo(() => {
                     })}
                 </tbody>
             </Table>
-            <hr/>
             {/* 페이지 선택 버튼 */}
             <div style={{textAlign: "center"}}>
                 <button type="button" onClick={onClickBefore}>
                     이전 페이지
                 </button>
-                <p style={{ display: "inline-block", padding: "0 20px" }}>{page}</p>
+                <p style={{ display: "inline-block", padding: "0 20px" }}>{page} / <span style={{color: '#16B'}}>{Math.ceil(totalCount/pageBlock)}</span></p>
                 <button type="button" onClick={onClickNext}>
                     다음 페이지
                 </button>
