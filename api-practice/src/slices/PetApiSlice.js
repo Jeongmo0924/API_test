@@ -9,7 +9,16 @@ export const petApiList = createAsyncThunk("petApi/list", async (payload, {rejec
 
     try {
         // get('URL)
-        result = await axios.get('https://www.pettravel.kr/api/listArea.do?page=1&pageBlock=10&areaCode=AC01');
+        result = await axios.get('http://www.pettravel.kr/api/listPart.do?', {
+            params: {
+                // 분야 코드
+                partCode : payload.partCode ? payload.partCode : 'PC02',
+                // 페이지 번호
+                page: payload.page ? payload.page : 1,
+                // 페이지당 결과 수(1~50)
+                pageBlock: payload.pageBlock ? payload.pageBlock : 10,
+            }
+        })
     } catch (e) {
         // 에러 발생시 `rejectWithValue()` 함수에 에러 데이터를 전달하면 extraReducers의 rejected 함수가 호출된다.
         result = rejectWithValue(e.response);
