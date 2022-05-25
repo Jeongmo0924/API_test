@@ -1,6 +1,24 @@
 import React, { memo } from "react";
+import styled from "styled-components"
 import { petApiList } from "../slices/PetApiSlice";
 import { useSelector, useDispatch } from "react-redux";
+import Table from "../components/Table"
+/** 드롭다운을 배치하기 위한 박스 */
+const SelectContainer = styled.div`
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    margin: 0;
+
+    select {
+        margin-right: 15px;
+        font-size: 16px;
+        padding: 5px 10px;
+    }
+`
 
 const PetApi = memo(() => {
     const dispatch = useDispatch();
@@ -21,12 +39,11 @@ const PetApi = memo(() => {
                 pageBlock: pageBlock,
             })
         );
-    }, [dispatch, partCode, page, pageBlock]);
+    }, [dispatch, partCode, page, pageBlock, ]);
 
     // 드롭박스의 선택값이 바뀔 때, 그 값을 상태값에 저장할 함수
     const onChangePart = (e) => {
         e.preventDefault();
-
         setPartCode(e.target.value);
         setPage(1);
     };
@@ -35,8 +52,7 @@ const PetApi = memo(() => {
     const onClickNext = (e) => {
         e.preventDefault();
         const nextPage = page + 1;
-        console.log(totalCount/pageBlock);
-        if(nextPage < totalCount/pageBlock){
+        if(nextPage < totalCount/pageBlock + 1){
         setPage(nextPage);
         }
     };
@@ -57,62 +73,83 @@ const PetApi = memo(() => {
     };
     return (
         <div>
-            {/* 분야별 선택 필터 */}
-            <select name="part" onChange={onChangePart}>
-                <option name="part" value="">
-                    -- 분야 --
-                </option>
-                <option name="part" value="PC01">
-                    식음료
-                </option>
-                <option name="part" value="PC02">
-                    숙박
-                </option>
-                <option name="part" value="PC03">
-                    관광지
-                </option>
-                <option name="part" value="PC04">
-                    체험
-                </option>
-                <option name="part" value="PC05">
-                    동물병원
-                </option>
-            </select>
-            <hr />
+            <SelectContainer>
+                {/* 분야별 선택 필터 */}
+                <select className="select" name="part" onChange={onChangePart}>
+                    <option name="part" value="">
+                        -- 분야 --
+                    </option>
+                    <option name="part" value="PC01">
+                        식음료
+                    </option>
+                    <option name="part" value="PC02">
+                        숙박
+                    </option>
+                    <option name="part" value="PC03">
+                        관광지
+                    </option>
+                    <option name="part" value="PC04">
+                        체험
+                    </option>
+                    <option name="part" value="PC05">
+                        동물병원
+                    </option>
+                </select>
+                {/* 페이지당 결과 수 선택 드롭다운 */}
+                <select className="select" name="pageBlock" onChange={onChangePageBlock}>
+                    <option name="pageBlock" value="10">
+                        10
+                    </option>
+                    <option name="pageBlock" value="20">
+                        20
+                    </option>
+                    <option name="pageBlock" value="30">
+                        30
+                    </option>
+                    <option name="pageBlock" value="40">
+                        40
+                    </option>
+                    <option name="pageBlock" value="50">
+                        50
+                    </option>
+                </select>
+            </SelectContainer>
+            <Table>
+                <thead>
+                    <tr>
+                        <th>지역명</th>
+                        <th>분야명</th>
+                        <th>업체명</th>
+                        <th>주소</th>
+                        <th>전화번호</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {resultList &&
+                    resultList.map((v, i) => {
+                        return (
+                            <tr key={i}>
+                                <td>{v.areaName}</td>
+                                <td>{v.partName}</td>
+                                <td>{v.title}</td>
+                                <td>{v.address}</td>
+                                <td>{v.tel}</td>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </Table>
+            <hr/>
             {/* 페이지 선택 버튼 */}
-            <button type="button" onClick={onClickBefore}>
-                이전 페이지
-            </button>
-            <p style={{ display: "inline-block", padding: "0 20px" }}>{page}</p>
-            <button type="button" onClick={onClickNext}>
-                다음 페이지
-            </button>
-            <hr />
-            {/* 페이지당 결과 수 선택 드롭다운 */}
-            <select name="pageBlock" onChange={onChangePageBlock}>
-                <option name="pageBlock" value="10">
-                    10
-                </option>
-                <option name="pageBlock" value="20">
-                    20
-                </option>
-                <option name="pageBlock" value="30">
-                    30
-                </option>
-                <option name="pageBlock" value="40">
-                    40
-                </option>
-                <option name="pageBlock" value="50">
-                    50
-                </option>
-            </select>
-            <hr />
-
-            {JSON.stringify(resultList)}
-            {resultList &&
-                resultList.map((v, i) => {
-                    return <h1 key={i}>{v.title}</h1>;
-                })}
+            <div style={{textAlign: "center"}}>
+                <button type="button" onClick={onClickBefore}>
+                    이전 페이지
+                </button>
+                <p style={{ display: "inline-block", padding: "0 20px" }}>{page}</p>
+                <button type="button" onClick={onClickNext}>
+                    다음 페이지
+                </button>
+            </div>
         </div>
     );
 });
