@@ -17,7 +17,7 @@ const PetApi = memo(() => {
         dispatch(
             petApiList({
                 partCode: partCode,
-                page: page,
+                page: page*pageBlock,
                 pageBlock: pageBlock,
             })
         );
@@ -35,7 +35,7 @@ const PetApi = memo(() => {
         e.preventDefault();
         const nextPage = page + 1;
         console.log(totalCount/pageBlock);
-        if(nextPage < totalCount/pageBlock + 1){
+        if(nextPage < totalCount/pageBlock){
         setPage(nextPage);
         }
     };
