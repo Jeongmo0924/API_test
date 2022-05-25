@@ -46,8 +46,8 @@ const PetApiSlice = createSlice({
         },
         [petApiList.fulfilled]: (state, {payload}) => {
             return {
-                resultList: payload?.data?.resultList,
-                totalCount: payload?.data?.totalCount,
+                resultList: payload?.data[0].resultList,
+                totalCount: payload?.data[0].totalCount,
                 loading: false,
                 error: null,
             }

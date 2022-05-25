@@ -34,23 +34,25 @@ const PetApi = memo(() => {
     const onClickNext = (e) => {
         e.preventDefault();
         const nextPage = page + 1;
-        console.log(totalCount);
+        console.log(totalCount/pageBlock);
+        if(nextPage < totalCount/pageBlock + 1){
         setPage(nextPage);
-    }
+        }
+    };
     const onClickBefore = (e) => {
         e.preventDefault();
         const beforePage = page - 1;
-        if(beforePage > 0){
+        if (beforePage > 0) {
             setPage(beforePage);
         }
-    }
+    };
 
     // 페이지당 결과수 드롭박스 상태값에 저장할 함수
     const onChangePageBlock = (e) => {
         e.preventDefault();
 
         setPageBlock(e.target.value);
-    }
+    };
     return (
         <div>
             {/* 분야별 선택 필터 */}
@@ -74,12 +76,16 @@ const PetApi = memo(() => {
                     동물병원
                 </option>
             </select>
-<hr />
+            <hr />
             {/* 페이지 선택 버튼 */}
-            <button type="button" onClick={onClickBefore}>이전 페이지</button>
-            <p style={{display:'inline-block', padding:'0 20px'}}>{page}</p>
-            <button type="button" onClick={onClickNext}>다음 페이지</button>
-<hr />
+            <button type="button" onClick={onClickBefore}>
+                이전 페이지
+            </button>
+            <p style={{ display: "inline-block", padding: "0 20px" }}>{page}</p>
+            <button type="button" onClick={onClickNext}>
+                다음 페이지
+            </button>
+            <hr />
             {/* 페이지당 결과 수 선택 드롭다운 */}
             <select name="pageBlock" onChange={onChangePageBlock}>
                 <option name="pageBlock" value="10">
@@ -98,8 +104,13 @@ const PetApi = memo(() => {
                     50
                 </option>
             </select>
+            <hr />
 
             {JSON.stringify(resultList)}
+            {resultList &&
+                resultList.map((v, i) => {
+                    return <h1 key={i}>{v.title}</h1>;
+                })}
         </div>
     );
 });
