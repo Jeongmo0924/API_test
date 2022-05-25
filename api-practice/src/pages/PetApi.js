@@ -17,7 +17,7 @@ const PetApi = memo(() => {
         dispatch(
             petApiList({
                 partCode: partCode,
-                page: page === 1 ? page : page*pageBlock,
+                page: page === 1 ? page : (page-1)*pageBlock,
                 pageBlock: pageBlock,
             })
         );
