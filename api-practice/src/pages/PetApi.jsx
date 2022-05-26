@@ -10,7 +10,7 @@ import PageWrapper from "../components/PageWrapper";
 /** 드롭다운을 배치하기 위한 박스 */
 const SelectContainer = styled.div`
   position: sticky;
-  top: 0;
+  top: 107.02px;
   margin: 0;
   padding: 10px 0;
   text-align: right;
@@ -123,7 +123,7 @@ const PetApi = memo(() => {
         </label>
       </SelectContainer>
       <Table>
-        <thead style={{ position: "sticky", top: "151.03px" }}>
+        <thead style={{ position: "sticky", top: "161.02px" }}>
           <tr>
             <th>지역명</th>
             <th>분야명</th>
