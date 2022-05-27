@@ -6,6 +6,8 @@ import { NavLink } from "react-router-dom";
 
 import Table from "../components/Table";
 import PageWrapper from "../components/PageWrapper";
+import ErrorVeiw from "../components/ErrorView";
+import Spinner from "../components/Spinner"
 
 /** 드롭다운을 배치하기 위한 박스 */
 const SelectContainer = styled.div`
@@ -83,6 +85,7 @@ const PetApi = memo(() => {
   return (
     <PageWrapper>
       {/* 분야별 선택 필터 */}
+      <Spinner visible={loading}/>
       <SelectContainer>
         <label>
           분야 선택 :
@@ -122,54 +125,58 @@ const PetApi = memo(() => {
           </select>
         </label>
       </SelectContainer>
-      <Table>
-        <thead style={{ position: "sticky", top: "161.02px" }}>
-          <tr>
-            <th>지역명</th>
-            <th>분야명</th>
-            <th>업체명</th>
-            <th>주소</th>
-            <th>전화번호</th>
-            <th>상세페이지</th>
-          </tr>
-        </thead>
-        <tbody>
-          {resultList &&
-            resultList.map((v, i) => {
-              return (
-                <tr key={i}>
-                  <td>{v.areaName}</td>
-                  <td>{v.partName}</td>
-                  <td>{v.title}</td>
-                  <td>{v.address}</td>
-                  <td>{v.tel}</td>
-                  <td>
-                    <NavLink
-                      to={`/detail/${partCode || "PC02"}/${v.contentSeq}`}
-                    >
-                      상세보기
-                    </NavLink>
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </Table>
-      {/* 페이지 선택 버튼 */}
-      <div style={{ padding: "32px 0", textAlign: "center" }}>
-        <button type="button" onClick={onClickBefore}>
-          이전 페이지
-        </button>
-        <p style={{ display: "inline-block", padding: "0 20px" }}>
-          {page} /{" "}
-          <span style={{ color: "#16B" }}>
-            {Math.ceil(totalCount / pageBlock)}
-          </span>
-        </p>
-        <button type="button" onClick={onClickNext}>
-          다음 페이지
-        </button>
-      </div>
+      {error ? (<ErrorVeiw error={error}/>) : (
+        <>
+          <Table>
+            <thead style={{ position: "sticky", top: "161.02px" }}>
+              <tr>
+                <th>지역명</th>
+                <th>분야명</th>
+                <th>업체명</th>
+                <th>주소</th>
+                <th>전화번호</th>
+                <th>상세페이지</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resultList &&
+                resultList.map((v, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{v.areaName}</td>
+                      <td>{v.partName}</td>
+                      <td>{v.title}</td>
+                      <td>{v.address}</td>
+                      <td>{v.tel}</td>
+                      <td>
+                        <NavLink
+                          to={`/detail/${partCode || "PC02"}/${v.contentSeq}`}
+                        >
+                          상세보기
+                        </NavLink>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </Table>
+          {/* 페이지 선택 버튼 */}
+          <div style={{ padding: "32px 0", textAlign: "center" }}>
+            <button type="button" onClick={onClickBefore}>
+              이전 페이지
+            </button>
+            <p style={{ display: "inline-block", padding: "0 20px" }}>
+              {page} /{" "}
+              <span style={{ color: "#16B" }}>
+                {Math.ceil(totalCount / pageBlock)}
+              </span>
+            </p>
+            <button type="button" onClick={onClickNext}>
+              다음 페이지
+            </button>
+          </div>
+        </>
+      )}
     </PageWrapper>
   );
 });
