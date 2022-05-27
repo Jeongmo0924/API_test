@@ -1,24 +1,24 @@
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { petDetailList } from "../slices/PetApiDetailSlice";
 import { useParams } from "react-router-dom";
-
-import KakaoMap from "../components/KakaoMap";
-import Table from "../components/Table";
 import { Swiper, SwiperSlide } from "swiper/react";
-import PageWrapper from "../components/PageWrapper";
-import DetailItem from "../components/DetailItem";
+import { Pagination, Navigation } from "swiper"; // import required modules
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-// import required modules
-import { Pagination, Navigation } from "swiper";
+import KakaoMap from "../components/KakaoMap";
+import Table from "../components/Table";
+import PageWrapper from "../components/PageWrapper";
+import DetailItem from "../components/DetailItem";
+import Spinner from "../components/Spinner";
+import ErrorView from "../components/ErrorView";
 
-const AlbumWrapper = styled.div`
+const AlbumWrapper = memo(styled.div`
   text-align: center;
   width: 100%;
   .mySwiper {
@@ -37,9 +37,9 @@ const AlbumWrapper = styled.div`
       }
     }
   }
-`;
+`);
 
-const ItemContainer = styled.div`
+const ItemContainer = memo(styled.div`
   .placeInfo {
     margin: 32px 0;
     display: flex;
@@ -87,9 +87,9 @@ const ItemContainer = styled.div`
       }
     }
   }
-`;
+`);
 
-const InfoTable = styled(Table)`
+const InfoTable = memo(styled(Table)`
   margin: 32px auto;
   width: 320px;
   border: 3px solid var(--color-blue);
@@ -101,9 +101,9 @@ const InfoTable = styled(Table)`
   tbody {
     font-size: 12px;
   }
-`;
+`);
 
-const Detail = () => {
+const Detail = memo(() => {
   const params = useParams();
   const partCode = params.partCode;
   const contentNum = parseInt(params.contentNum);
@@ -115,168 +115,175 @@ const Detail = () => {
   useEffect(() => {
     dispatch(petDetailList({ partCode, contentNum }));
   }, [dispatch, partCode, contentNum]);
-  console.log("resultList", resultList);
 
   return (
     <PageWrapper>
-      <ItemContainer>
-        <div className="descriptions">
-          {resultList && (
-            <>
-              <AlbumWrapper>
-                <Swiper
-                  rewind={true}
-                  slidesPerView={3}
-                  spaceBetween={50}
-                  pagination={{
-                    clickable: true,
-                  }}
-                  navigation={true}
-                  modules={[Pagination, Navigation]}
-                  className="mySwiper"
-                >
-                  {resultList.imageList.map((item, index) => (
-                    <SwiperSlide className="slide" key={index}>
-                      <img src={item.image} />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </AlbumWrapper>
-              <div className="placeInfo">
-                <KakaoMap
-                  width="420px"
-                  height="420px"
-                  lat={resultList?.latitude}
-                  lng={resultList?.longitude}
-                />
-                <span className="infos">
-                  <h1>{resultList.title}</h1>
-                  <p>
-                    <span className="desc">분야</span>
-                    <span>{resultList.partName}</span>
-                  </p>
-                  <p>
-                    <span className="desc">지역</span>
-                    <span>{resultList.areaName}</span>
-                  </p>
-                  <p>
-                    <span className="desc">키워드</span>
-                    <span>
-                      {resultList.keyword
-                        .replaceAll(" ,", ",")
-                        .split(",")
-                        .map((elem, index) => (
-                          <span className="keyword" key={index}>
-                            {elem}
-                          </span>
-                        ))}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="desc">주소</span>
-                    <span>{resultList.address}</span>
-                  </p>
-                  <p>
-                    <span className="desc">이용시간</span>
-                    <span>{resultList.usedTime}</span>
-                  </p>
-                  <p>
-                    <span className="desc">전화번호</span>
-                    <span className="tel">{resultList.tel}</span>
-                  </p>
-                  <p>
-                    <span className="desc">홈페이지</span>
-                    <span>
-                      <a href={resultList.homePage}>{resultList.homePage}</a>
-                    </span>
-                  </p>
-                </span>
-              </div>
-              <div className="detailWrapper">
-                {resultList.content && (
-                  <div className="detailItem">
-                    <h3>시설 소개</h3>
-                    <ul>
-                      {resultList.content.split(".").map((elem, index) => (
-                        <p key={index}>{elem}</p>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <DetailItem
-                  title="비품제공"
-                  data={resultList.provisionSupply}
-                />
-                <DetailItem
-                  title="반려동물 시설"
-                  data={resultList.petFacility}
-                />
-                <DetailItem title="식당" data={resultList.restaurant} />
-                <DetailItem title="주차장 수용" data={resultList.parkingLog} />
-                <DetailItem title="주요시설" data={resultList.mainFacility} />
-                <DetailItem title="이용요금" data={resultList.usedCost} />
-                <DetailItem
-                  title="애견정책 및 주의사항"
-                  data={resultList.policyCautions}
-                />
-                <DetailItem
-                  title="응급상황 대처 여부"
-                  data={resultList.emergencyResponse}
-                />
-                <DetailItem title="기타" data={resultList.memo} />
-                <div className="detailItem">
-                  <h3>기타정보</h3>
-                  <InfoTable>
-                    <thead>
-                      <tr>
-                        <td>종류</td>
-                        <td>여부</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>목욕시설 (Y/N)</td>
-                        <td>{resultList.bathFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>비품제공 (Y/N)</td>
-                        <td>{resultList.provisionFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>펫 동반식당 (Y/N)</td>
-                        <td>{resultList.petFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>제한 몸무게 (kg)</td>
-                        <td>{resultList.petWeight}</td>
-                      </tr>
-                      <tr>
-                        <td>응급 수칙 (Y/N)</td>
-                        <td>{resultList.emergencyFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>입장료 (Y/N)</td>
-                        <td>{resultList.entranceFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>주차장 (Y/N)</td>
-                        <td>{resultList.parkingFlag}</td>
-                      </tr>
-                      <tr>
-                        <td>실내외 구분 (IN/OUT)</td>
-                        <td>{resultList.inOutFlag}</td>
-                      </tr>
-                    </tbody>
-                    <tfoot></tfoot>
-                  </InfoTable>
+      {loading && <Spinner visible={loading} />}
+      {error ? (
+        <ErrorView error={error} />
+      ) : (
+        <ItemContainer>
+          <div className="descriptions">
+            {resultList && (
+              <>
+                <AlbumWrapper>
+                  <Swiper
+                    rewind={true}
+                    slidesPerView={3}
+                    spaceBetween={50}
+                    pagination={{
+                      clickable: true,
+                    }}
+                    navigation={true}
+                    modules={[Pagination, Navigation]}
+                    className="mySwiper"
+                  >
+                    {resultList.imageList.map((item, index) => (
+                      <SwiperSlide className="slide" key={index}>
+                        <img src={item.image} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </AlbumWrapper>
+                <div className="placeInfo">
+                  <KakaoMap
+                    width="420px"
+                    height="420px"
+                    lat={resultList?.latitude}
+                    lng={resultList?.longitude}
+                  />
+                  <span className="infos">
+                    <h1>{resultList.title}</h1>
+                    <p>
+                      <span className="desc">분야</span>
+                      <span>{resultList.partName}</span>
+                    </p>
+                    <p>
+                      <span className="desc">지역</span>
+                      <span>{resultList.areaName}</span>
+                    </p>
+                    <p>
+                      <span className="desc">키워드</span>
+                      <span>
+                        {resultList.keyword
+                          .replaceAll(" ,", ",")
+                          .split(",")
+                          .map((elem, index) => (
+                            <span className="keyword" key={index}>
+                              {elem}
+                            </span>
+                          ))}
+                      </span>
+                    </p>
+                    <p>
+                      <span className="desc">주소</span>
+                      <span>{resultList.address}</span>
+                    </p>
+                    <p>
+                      <span className="desc">이용시간</span>
+                      <span>{resultList.usedTime}</span>
+                    </p>
+                    <p>
+                      <span className="desc">전화번호</span>
+                      <span className="tel">{resultList.tel}</span>
+                    </p>
+                    <p>
+                      <span className="desc">홈페이지</span>
+                      <span>
+                        <a href={resultList.homePage}>{resultList.homePage}</a>
+                      </span>
+                    </p>
+                  </span>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
-      </ItemContainer>
+                <div className="detailWrapper">
+                  {resultList.content && (
+                    <div className="detailItem">
+                      <h3>시설 소개</h3>
+                      <ul>
+                        {resultList.content.split(".").map((elem, index) => (
+                          <p key={index}>{elem}</p>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <DetailItem
+                    title="비품제공"
+                    data={resultList.provisionSupply}
+                  />
+                  <DetailItem
+                    title="반려동물 시설"
+                    data={resultList.petFacility}
+                  />
+                  <DetailItem title="식당" data={resultList.restaurant} />
+                  <DetailItem
+                    title="주차장 수용"
+                    data={resultList.parkingLog}
+                  />
+                  <DetailItem title="주요시설" data={resultList.mainFacility} />
+                  <DetailItem title="이용요금" data={resultList.usedCost} />
+                  <DetailItem
+                    title="애견정책 및 주의사항"
+                    data={resultList.policyCautions}
+                  />
+                  <DetailItem
+                    title="응급상황 대처 여부"
+                    data={resultList.emergencyResponse}
+                  />
+                  <DetailItem title="기타" data={resultList.memo} />
+                  <div className="detailItem">
+                    <h3>기타정보</h3>
+                    <InfoTable>
+                      <thead>
+                        <tr>
+                          <td>종류</td>
+                          <td>여부</td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>목욕시설 (Y/N)</td>
+                          <td>{resultList.bathFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>비품제공 (Y/N)</td>
+                          <td>{resultList.provisionFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>펫 동반식당 (Y/N)</td>
+                          <td>{resultList.petFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>제한 몸무게 (kg)</td>
+                          <td>{resultList.petWeight}</td>
+                        </tr>
+                        <tr>
+                          <td>응급 수칙 (Y/N)</td>
+                          <td>{resultList.emergencyFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>입장료 (Y/N)</td>
+                          <td>{resultList.entranceFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>주차장 (Y/N)</td>
+                          <td>{resultList.parkingFlag}</td>
+                        </tr>
+                        <tr>
+                          <td>실내외 구분 (IN/OUT)</td>
+                          <td>{resultList.inOutFlag}</td>
+                        </tr>
+                      </tbody>
+                      <tfoot></tfoot>
+                    </InfoTable>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </ItemContainer>
+      )}
     </PageWrapper>
   );
-};
+});
 
 export default Detail;

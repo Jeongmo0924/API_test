@@ -1,34 +1,77 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import styled from "styled-components";
 import { petApiList } from "../slices/PetApiSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Table from "../components/Table";
 import PageWrapper from "../components/PageWrapper";
-import ErrorVeiw from "../components/ErrorView";
-import Spinner from "../components/Spinner"
+import ErrorView from "../components/ErrorView";
+import Spinner from "../components/Spinner";
 
 /** 드롭다운을 배치하기 위한 박스 */
-const SelectContainer = styled.div`
+const SelectContainer = memo(styled.div`
   position: sticky;
-  top: 107.02px;
+  top: 105.5px;
+  /* top: 102.5px+3px; */
   margin: 0;
-  padding: 10px 0;
+  padding: 12px 0;
   text-align: right;
-  z-index: 999;
   background-color: #fff;
   border-bottom: 3px solid #16b;
+  z-index: 999;
 
   select {
     margin: 0 15px;
     font-size: 16px;
     padding: 5px 10px;
   }
-`;
+`);
+
+const TableWrapper = memo(styled.div`
+  thead {
+    position: sticky;
+    top: 164.5px;
+  }
+  tbody {
+    tr {
+      .smallText {
+        font-size: 12px;
+      }
+      &:hover {
+        color: var(--color-blue);
+        cursor: pointer;
+        .title {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+`);
+
+const ButtonContainer = memo(styled.div`
+  margin: 24px 0;
+  text-align: center;
+  button {
+    cursor: pointer;
+    padding: 4px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
+  p {
+    display: inline-block;
+    padding: 0 20px;
+  }
+  span {
+    color: #16b;
+  }
+`);
+
+const partNames = ["식음료", "숙박", "관광지", "체험", "동물병원"];
 
 const PetApi = memo(() => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { resultList, totalCount, loading, error } = useSelector(
     (state) => state.pet
   );
@@ -38,7 +81,7 @@ const PetApi = memo(() => {
   // 몇 페이지를 나타낼 것인지를 의미하는 상태값
   const [page, setPage] = React.useState(1);
   // 한 페이지당 보여줄 결과 수를 저장할 상태값
-  const [pageBlock, setPageBlock] = React.useState(10);
+  const [pageBlock, setPageBlock] = React.useState(20);
 
   React.useEffect(() => {
     dispatch(
@@ -51,71 +94,76 @@ const PetApi = memo(() => {
   }, [dispatch, partCode, page, pageBlock]);
 
   // 드롭박스의 선택값이 바뀔 때, 그 값을 상태값에 저장할 함수
-  const onChangePart = (e) => {
+  const onChangePart = useCallback((e) => {
     e.preventDefault();
     setPartCode(e.target.value);
     setPage(1);
-  };
+  }, []);
 
   // 페이지 선택 버튼이 눌렸을 때 페이지를 바꿀 함수
-  const onClickNext = (e) => {
+  const onClickNext = useCallback((e) => {
     e.preventDefault();
     const nextPage = page + 1;
     if (nextPage < totalCount / pageBlock + 1) {
       setPage(nextPage);
     }
-  };
+  }, []);
 
-  const onClickBefore = (e) => {
+  const onClickBefore = useCallback((e) => {
     e.preventDefault();
     const beforePage = page - 1;
     if (beforePage > 0) {
       setPage(beforePage);
     }
-  };
+  }, []);
 
   // 페이지당 결과수 드롭박스 상태값에 저장할 함수
-  const onChangePageBlock = (e) => {
+  const onChangePageBlock = useCallback((e) => {
     e.preventDefault();
 
     setPageBlock(e.target.value);
     setPage(1);
-  };
+  }, []);
+
+  const onItemClick = useCallback(
+    (e) => {
+      const { contentseq, partname } = e.currentTarget.dataset;
+      const partcode = `PC0${partNames.indexOf(partname) + 1}`;
+      navigate(`/detail/${partcode}/${contentseq}`);
+    },
+    [navigate]
+  );
 
   return (
     <PageWrapper>
       {/* 분야별 선택 필터 */}
-      <Spinner visible={loading}/>
+      <Spinner visible={loading} />
       <SelectContainer>
         <label>
           분야 선택 :
-          <select className="select" name="part" onChange={onChangePart}>
+          <select
+            className="select"
+            name="part"
+            onChange={onChangePart}
+            defaultValue={partCode}
+          >
             <option name="part" value="">
               -- 분야 --
             </option>
-            <option name="part" value="PC01">
-              식음료
-            </option>
-            <option name="part" value="PC02">
-              숙박
-            </option>
-            <option name="part" value="PC03">
-              관광지
-            </option>
-            <option name="part" value="PC04">
-              체험
-            </option>
-            <option name="part" value="PC05">
-              동물병원
-            </option>
+            {partNames.map((name, index) => (
+              <option name="part" value={`PC0${index + 1}`} key={index}>
+                {name}
+              </option>
+            ))}
           </select>
-        </label>{" "}
+        </label>
         페이지 당 결과수 :{/* 페이지당 결과 수 선택 드롭다운 */}
         <label>
           <select
             className="select"
             name="pageBlock"
             onChange={onChangePageBlock}
+            defaultValue={pageBlock}
           >
             {[10, 20, 30, 40, 50].map((num) => (
               <option name="pageBlock" value={num} key={num}>
@@ -125,57 +173,53 @@ const PetApi = memo(() => {
           </select>
         </label>
       </SelectContainer>
-      {error ? (<ErrorVeiw error={error}/>) : (
-        <>
+      {error ? (
+        <ErrorView error={error} />
+      ) : (
+        <TableWrapper>
           <Table>
-            <thead style={{ position: "sticky", top: "161.02px" }}>
+            <thead className="thead">
               <tr>
-                <th>지역명</th>
-                <th>분야명</th>
-                <th>업체명</th>
+                <th width="52px">분야명</th>
+                <th width="52px">지역명</th>
+                <th width="228px">업체명</th>
                 <th>주소</th>
-                <th>전화번호</th>
-                <th>상세페이지</th>
+                <th width="120px">전화번호</th>
               </tr>
             </thead>
             <tbody>
               {resultList &&
-                resultList.map((v, i) => {
+                resultList.map((v) => {
                   return (
-                    <tr key={i}>
-                      <td>{v.areaName}</td>
+                    <tr
+                      key={v.contentSeq}
+                      onClick={onItemClick}
+                      data-contentseq={v.contentSeq}
+                      data-partname={v.partName}
+                    >
                       <td>{v.partName}</td>
-                      <td>{v.title}</td>
-                      <td>{v.address}</td>
-                      <td>{v.tel}</td>
-                      <td>
-                        <NavLink
-                          to={`/detail/${partCode || "PC02"}/${v.contentSeq}`}
-                        >
-                          상세보기
-                        </NavLink>
-                      </td>
+                      <td>{v.areaName}</td>
+                      <td className="title">{v.title}</td>
+                      <td className="smallText">{v.address}</td>
+                      <td className="smallText">{v.tel}</td>
                     </tr>
                   );
                 })}
             </tbody>
           </Table>
           {/* 페이지 선택 버튼 */}
-          <div style={{ padding: "32px 0", textAlign: "center" }}>
+          <ButtonContainer>
             <button type="button" onClick={onClickBefore}>
               이전 페이지
             </button>
-            <p style={{ display: "inline-block", padding: "0 20px" }}>
-              {page} /{" "}
-              <span style={{ color: "#16B" }}>
-                {Math.ceil(totalCount / pageBlock)}
-              </span>
+            <p>
+              {page} / <span>{Math.ceil(totalCount / pageBlock)}</span>
             </p>
             <button type="button" onClick={onClickNext}>
               다음 페이지
             </button>
-          </div>
-        </>
+          </ButtonContainer>
+        </TableWrapper>
       )}
     </PageWrapper>
   );

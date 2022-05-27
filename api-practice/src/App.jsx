@@ -5,6 +5,7 @@ import styled from "styled-components";
 import PetApi from "./pages/PetApi";
 // import Test from "./Test";
 import Detail from "./pages/Detail";
+import Error404 from "./pages/Error404";
 import Footer from "./components/Footer";
 
 const HeaderContainer = styled.header`
@@ -37,6 +38,7 @@ const App = memo(() => {
       <Routes>
         <Route path="/" element={<PetApi />} />
         <Route path="/detail/:partCode/:contentNum" element={<Detail />} />
+        <Route path="/*" element={<Error404 />} />
       </Routes>
       <Footer />
     </div>

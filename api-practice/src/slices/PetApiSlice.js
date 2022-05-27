@@ -18,7 +18,7 @@ export const petApiList = createAsyncThunk(
           // 페이지 번호
           page: payload.page ? payload.page : 1,
           // 페이지당 결과 수(1~50)
-          pageBlock: payload.pageBlock ? payload.pageBlock : 10,
+          pageBlock: payload.pageBlock ? payload.pageBlock : 20,
         },
       });
     } catch (e) {
