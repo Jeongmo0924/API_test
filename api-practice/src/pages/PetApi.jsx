@@ -101,21 +101,24 @@ const PetApi = memo(() => {
   }, []);
 
   // 페이지 선택 버튼이 눌렸을 때 페이지를 바꿀 함수
-  const onClickNext = useCallback((e) => {
-    e.preventDefault();
-    const nextPage = page + 1;
-    if (nextPage < totalCount / pageBlock + 1) {
-      setPage(nextPage);
-    }
-  }, [page]);
+  const onClickNext = useCallback(
+    (e) => {
+      e.preventDefault();
+      setPage((page) => {
+        if (page >= totalCount / pageBlock) return page;
+        return page + 1;
+      });
+    },
+    [totalCount, pageBlock]
+  );
 
   const onClickBefore = useCallback((e) => {
     e.preventDefault();
-    const beforePage = page - 1;
-    if (beforePage > 0) {
-      setPage(beforePage);
-    }
-  }, [page]);
+    setPage((page) => {
+      if (page <= 1) return 1;
+      return page - 1;
+    });
+  }, []);
 
   // 페이지당 결과수 드롭박스 상태값에 저장할 함수
   const onChangePageBlock = useCallback((e) => {
