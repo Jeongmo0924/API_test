@@ -107,7 +107,7 @@ const PetApi = memo(() => {
     if (nextPage < totalCount / pageBlock + 1) {
       setPage(nextPage);
     }
-  }, []);
+  }, [page]);
 
   const onClickBefore = useCallback((e) => {
     e.preventDefault();
@@ -115,7 +115,7 @@ const PetApi = memo(() => {
     if (beforePage > 0) {
       setPage(beforePage);
     }
-  }, []);
+  }, [page]);
 
   // 페이지당 결과수 드롭박스 상태값에 저장할 함수
   const onChangePageBlock = useCallback((e) => {
