@@ -138,7 +138,7 @@ const Detail = memo(() => {
                     modules={[Pagination, Navigation]}
                     className="mySwiper"
                   >
-                    {resultList.imageList.map((item, index) => (
+                    {resultList.imageList && resultList.imageList.map((item, index) => (
                       <SwiperSlide className="slide" key={index}>
                         <img src={item.image} />
                       </SwiperSlide>
