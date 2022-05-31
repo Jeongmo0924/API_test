@@ -2,6 +2,7 @@
   "name": "api-practice",
   "version": "0.1.0",
   "private": true,
+  "homepage": "portfolio/react_semi_project",
   "proxy": "http://localhost:3001",
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.2",
